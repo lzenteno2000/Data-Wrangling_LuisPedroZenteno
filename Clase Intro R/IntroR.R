@@ -61,12 +61,14 @@ factor_2<-ordered(factor,levels=c("Mon","Tue","Wed","Thu","Fri","Sat","Sun"))
 
 ### dataframe
 
+### Con factores
 df<-data.frame(
   col1<-c("this", "is", "a","vector","of","strings"),
   col2<-1:6,
   col3<-letters[1:6],
   stringsAsFactors = FALSE)
 
+### Sin factores
 df2<-data.frame(
   col1<-c("this", "is", "a","vector","of","strings"),
   col2<-1:6,
@@ -79,4 +81,23 @@ names(df)
 colnames(df)
 head(df,10)
 tail(df,5)
+
+
+## Dimensions 
+ncol(df)
 nrow(df)
+
+# Nuevas Columnas
+df$Columna1
+df$Columna4<-11:16
+df[4,3]
+df[,3]
+
+## df[fila, columna]
+df[1,]
+
+## indexing 
+new_elements<-c("new",7,2,"g",17)
+rbind(df,new_elements)
+df2$col1<-factor(df2$col1)
+rbind(df2,new_elements)
