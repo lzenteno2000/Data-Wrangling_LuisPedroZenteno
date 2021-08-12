@@ -1,0 +1,91 @@
+---
+title: "Laboratorio_1"
+author: "Luis Pedro Zenteno"
+date: "8/11/2021"
+output: rmarkdown::github_document
+---
+
+# Problema 1
+
+## 1. Unificación de archivos de Excel y exportación
+
+### Cargar archivos de Excel y dejar variables deseadas. 
+```{r }
+library(readxl)
+ene_2018<-read_excel("Laboratorio_1/01-2018.xlsx")
+feb_2018<-read_excel("Laboratorio_1/02-2018.xlsx")
+mar_2018<-read_excel("Laboratorio_1/03-2018.xlsx")
+abr_2018<-read_excel("Laboratorio_1/04-2018.xlsx")
+may_2018<-read_excel("Laboratorio_1/05-2018.xlsx")
+jun_2018<-read_excel("Laboratorio_1/06-2018.xlsx")
+jul_2018<-read_excel("Laboratorio_1/07-2018.xlsx")
+jul_2018<-jul_2018[,c(-9)]
+ago_2018<-read_excel("Laboratorio_1/08-2018.xlsx")
+ago_2018<-ago_2018[,c(-9,-10)]
+sep_2018<-read_excel("Laboratorio_1/09-2018.xlsx")
+sep_2018<-sep_2018[,c(-9)]
+oct_2018<-read_excel("Laboratorio_1/10-2018.xlsx")
+oct_2018<-oct_2018[,c(-9)]
+nov_2018<-read_excel("Laboratorio_1/11-2018.xlsx")
+nov_2018<-nov_2018[,c(-9)]
+```
+
+### Agrego fechas a cada uno del los datasts
+```{r}
+ene_2018$fecha<-"01-2018"
+feb_2018$fecha<-"02-2018"
+mar_2018$fecha<-"03-2018"
+abr_2018$fecha<-"04-2018"
+may_2018$fecha<-"05-2018"
+jun_2018$fecha<-"06-2018"
+jul_2018$fecha<-"07-2018"
+ago_2018$fecha<-"08-2018"
+sep_2018$fecha<-"09-2018"
+oct_2018$fecha<-"10-2018"
+nov_2018$fecha<-"11-2018"
+```
+
+### Consolidad los datasets mensuales en un dataset anual
+```{r}
+entregas_2018<-rbind(ene_2018,feb_2018,mar_2018,abr_2018,may_2018,jun_2018,jul_2018,ago_2018,sep_2018,oct_2018,nov_2018)
+head(entregas_2018)
+```
+
+
+### Exportar ese archivo en formato csv o Excel
+```{r}
+write.csv(entregas_2018,"entregas_2018.csv")
+```
+
+# Problema 2
+
+## Utilizando la función lapply, encuentre la moda de cada vector de una lista de por lo menos 3 vectores.
+```{r}
+## Se utilizó la libreria de modeest la cual contiene una función (mfv) que permite calcular la moda. 
+## Base R no tiene una función que calcule la moda hasta donde pude investigar. 
+library(modeest)
+lista<-list(vec1=sample(1:100,size = 300,replace = TRUE),
+              vec2=sample(1:100,size = 300,replace = TRUE),
+              vec3=sample(1:100,size = 300,replace = TRUE)
+)
+modas<-lapply(lista,mfv)
+modas
+```
+# Problema 3
+```{r}
+library(readr)
+parque_vehicular_enero2019<-read_delim("INE_PARQUE_VEHICULAR_080219.txt",delim = "|",show_col_types = FALSE, locale=locale(encoding = "UTF-8"))
+head(parque_vehicular_enero2019,n = 10)
+```
+
+
+
+
+
+
+
+
+
+
+
+

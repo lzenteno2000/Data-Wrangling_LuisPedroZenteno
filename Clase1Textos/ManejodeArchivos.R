@@ -55,3 +55,36 @@ bancos_activos<-read_excel("data/bancos.xlsx")
 bancos_agencias<-read_excel("data/bancos.xlsx",sheet = "agencias")
 
 
+is.na #incluir na
+df[!is.na(df%col1),]
+
+colSums(df)
+
+df[v>4,]
+
+## apply functions
+
+find_sample<- function(x,s){
+  
+  for_index<-sample(1:nrow,size = s,replace=FALSE)
+  new_df<-x[for_index,]
+   return(new df)
+  
+}
+
+
+generate_df<- function(x){
+
+   return(
+     data.frame(
+       a=sample(letters,size = 10,replace = TRUE)
+       b=sample(1:10,size = 10,replace = TRUE)
+     )
+}
+generate_df
+lista<-lapply(1:400,generate_df)
+
+
+write.csv
+
+
