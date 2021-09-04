@@ -1,0 +1,342 @@
+---
+title: "DatosReporte"
+author: "Luis Pedro Zenteno"
+date: "9/3/2021"
+output: html_document
+---
+
+# Data
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+library(highcharter)
+library(tidyverse)
+library(readr)
+library(formattable)
+library(knitr)
+
+df<-read_delim("tabla_completa.csv",",",escape_double=FALSE,trim_ws=TRUE)
+df$UNIDAD<-gsub(pattern = "Camion Peque.*",replacement = "Camion Pequenio",x = df$UNIDAD)
+
+
+```
+
+# DESPACHO, Faltante, Devolución 
+
+```{r}
+df$faltante<-grepl(pattern="*.FALTANTE.*",x=df$CLIENTE,ignore.case = TRUE)
+faltante<-df[df$faltante==TRUE,]
+
+df$devolucion<-grepl(pattern="*Devolucion*",x=df$CLIENTE,ignore.case = TRUE)
+devolucion<-df[df$devolucion==TRUE,]
+
+despacho<-df[df$faltante==FALSE & df$devolucion==FALSE,]
+
+ventas<-df[df$devolucion==FALSE,]
+
+
+ventas$gallo<-grepl(pattern="*Gallo Negro*",x=ventas$CLIENTE,ignore.case = TRUE)
+
+
+```
+```{r}
+distribución<-as.data.frame(cbind(rbind("Despacho al Cliente","Faltante","Devolución"),c(1349,712,119)))
+names(distribución)=c("Tipo de Envío", "Envíos")
+kable(distribución)
+```
+
+# Ventas datos tomando en cuenta faltantes 
+```{r}
+ventas_mensuales<-ventas %>% 
+  group_by(MES) %>% 
+  summarise(cantidad_vendida=sum(Q))
+
+  ventas_mensuales %>% 
+  hchart("column",hcaes(MES,cantidad_vendida)) %>% 
+  hc_title(text="Ventas Mensuales en Q" ) %>% 
+  hc_subtitle(text="Mayores ventas en Mayo y pocas ventas en mazo y abril. Ventas relativamente estables")
+
+  # explicar ventas 
+
+  
+
+
+```
+
+```{r}
+ pedidos<- ventas %>% 
+    group_by(CLIENTE) %>% 
+    summarise(pedidos=n())
+
+pedidos$CLIENTE<-gsub(pattern = "TAQUERIA EL CHINITO.*",replacement = "TAQUERIA EL CHINITO",x = pedidos$CLIENTE)
+pedidos$CLIENTE<-gsub(pattern = "EL PINCHE OBELISCO.*",replacement = "EL PINCHE OBELISCO",x = pedidos$CLIENTE)
+pedidos$CLIENTE<-gsub(pattern = "EL GALLO NEGRO.*",replacement = "EL GALLO NEGRO",x = pedidos$CLIENTE)
+pedidos$CLIENTE<-gsub(pattern = "UBIQUO LABS.*",replacement = "UBIQUO LABS",x = pedidos$CLIENTE)
+pedidos$CLIENTE<-gsub(pattern = "POLLO PINULITO.*",replacement = "POLLO PINULITO",x = pedidos$CLIENTE)
+
+pedidos<-pedidos %>% 
+  group_by(CLIENTE) %>% 
+  summarise(pedidos=sum(pedidos)) %>% 
+  arrange(-pedidos)
+
+pedidos %>% 
+    hchart("column",hcaes(CLIENTE,pedidos)) %>% 
+  hc_title(text="Pedidos por Cliente" ) %>% 
+  hc_subtitle(text="")
+
+
+  ## quien nos pide con más frecuencia. 
+```
+
+# PARETO
+```{r}
+pareto<-ventas %>% 
+  group_by(CLIENTE) %>% 
+  summarise(ingreso = as.numeric(sum(Q))) %>% 
+  arrange(-ingreso)
+
+pareto$CLIENTE<-gsub(pattern = "TAQUERIA EL CHINITO.*",replacement = "TAQUERIA EL CHINITO",x = pareto$CLIENTE)
+pareto$CLIENTE<-gsub(pattern = "EL PINCHE OBELISCO.*",replacement = "EL PINCHE OBELISCO",x = pareto$CLIENTE)
+pareto$CLIENTE<-gsub(pattern = "EL GALLO NEGRO.*",replacement = "EL GALLO NEGRO",x = pareto$CLIENTE)
+pareto$CLIENTE<-gsub(pattern = "UBIQUO LABS.*",replacement = "UBIQUO LABS",x = pareto$CLIENTE)
+pareto$CLIENTE<-gsub(pattern = "POLLO PINULITO.*",replacement = "POLLO PINULITO",x = pareto$CLIENTE)
+
+pareto<-pareto %>% 
+  group_by(CLIENTE) %>% 
+  summarise(ingreso = as.numeric(sum(ingreso))) %>% 
+  arrange(-ingreso)
+
+ventas_por_cliente<-pareto
+
+ pareto<-pareto %>%  mutate(clientes = row_number(),
+         porcentaje_clientes = (clientes/max(clientes)),
+         ingresosac = cumsum(ingreso),
+         porcentaje_ingresos = (ingresosac/max(ingresosac)))
+ 
+pareto$porcentaje_clientes<-percent(pareto$porcentaje_clientes)
+pareto$porcentaje_ingresos<-percent(pareto$porcentaje_ingresos)
+```
+
+
+# Clientes
+```{r}
+clientes_lista<-pareto[,1]
+clientes_lista[5,]<-"UNIVERSIDAD FRANCISCO MARROQUIN"
+clientes_lista[6,]<-"ABARROTERÍA EBENEZER"
+clientes_lista[7,]<-"TIENDA LA BENDICIÓN"
+clientes_lista[9,]<-"SPORTA, S.A"
+clientes_lista[12,]<-"HOSPITAL ROOSEVELT"
+clientes_lista[11,]<-"CHICHARRONERIA EL RICO COLESTEROL"
+clientes_lista
+kable(clientes_lista)
+```
+
+#GRAFICA VENTAS POR CLIENTE 
+```{r}
+ventas_por_cliente %>% 
+  hchart(., type = "column", hcaes(CLIENTE, ingreso))%>% 
+  hc_title(text="Ventas por cliente" ) %>% 
+  hc_subtitle(text="") 
+
+#top 4 clientes (30%) mas del 48% de ventas
+```
+
+# politica de credito y nuestros clientes 
+```{r}
+ventas$CLIENTE<-gsub(pattern = "TAQUERIA EL CHINITO.*",replacement = "TAQUERIA EL CHINITO",x = ventas$CLIENTE)
+ventas$CLIENTE<-gsub(pattern = "EL PINCHE OBELISCO.*",replacement = "EL PINCHE OBELISCO",x = ventas$CLIENTE)
+ventas$CLIENTE<-gsub(pattern = "EL GALLO NEGRO.*",replacement = "EL GALLO NEGRO",x = ventas$CLIENTE)
+ventas$CLIENTE<-gsub(pattern = "UBIQUO LABS.*",replacement = "UBIQUO LABS",x = ventas$CLIENTE)
+ventas$CLIENTE<-gsub(pattern = "POLLO PINULITO.*",replacement = "POLLO PINULITO",x = ventas$CLIENTE)
+
+
+credito<-ventas %>%  
+  group_by(CLIENTE) %>% 
+  summarise(cantidad_vendida=sum(Q),credito_promedio=mean(CREDITO)) %>% 
+    arrange(-credito_promedio)
+
+credito %>% 
+  hchart(., type = "column", hcaes(CLIENTE, credito_promedio)) %>%
+  hc_title(text="Credito Por Cliente" ) %>% 
+  hc_subtitle(text="") %>% 
+  hc_colors(c("#FF7F50"))
+  
+  
+## analizar como esta politica de credito y compararlo con quien nos compra mas 
+## Los compradores se enfocan menos en los precios y más en la facilidad de pago
+#Se mejora la relación con tus clientes
+#Aumentan las ventas
+
+```
+
+
+
+
+
+#Tabla Pareto
+```{r}
+
+pareto_tabla<-pareto[,-c(2,3,5)]
+
+pareto_tabla[5,1]<-"UNIVERSIDAD FRANCISCO MARROQUIN"
+pareto_tabla[6,1]<-"ABARROTERÍA EBENEZER"
+pareto_tabla[7,1]<-"TIENDA LA BENDICIÓN"
+pareto_tabla[9,1]<-"SPORTA, S.A"
+pareto_tabla[12,1]<-"HOSPITAL ROOSEVELT"
+pareto_tabla[11,1]<-"CHICHARRONERIA EL RICO COLESTEROL"
+
+kable(pareto_tabla)
+
+#explicacion de pareto 
+```
+  
+# Grafica Pareto
+```{r}
+pareto %>% 
+  hchart(., type = "line", hcaes(porcentaje_ingresos, porcentaje_clientes))%>% 
+  hc_title(text=" Porcentaje de Clientes vs Porcentaje de Ingresos" ) %>% 
+  hc_subtitle(text="El 80% de nuestros ingresos se deben al 70% de nuestros clientes aproximadamente") 
+
+```
+
+
+
+
+# Analisis Devoluciones 
+```{r}
+viajes_devolucion<-devolucion %>%  
+  group_by(MES) %>% 
+  summarise(viajes=n(),cantidad=sum(Q))
+
+#porque viajamos tan seguido?  casi que cada 3 días 
+30/mean(viajes_devolucion$viajes)
+
+mean(viajes_devolucion$cantidad)
+
+
+#Cuanto genera gallo negro
+gallo_negro<-ventas %>% 
+  filter(ventas$gallo==TRUE) %>% 
+  group_by(MES) %>% 
+  summarise(viajes=n(),cantidad=sum(Q))
+
+#porcentaje de devolución 
+porcentaje_devolución<-gallo_negro %>% 
+  mutate(cantidad_devuelta=viajes_devolucion$cantidad) %>% 
+  mutate(porcentaje_devuelto=percent(cantidad_devuelta/(cantidad+cantidad_devuelta)))
+
+promedio_devolución<-sum(porcentaje_devolución$cantidad_devuelta)/sum(porcentaje_devolución$cantidad)
+porcentaje_devolución[,c(1,5)]
+promedio_devolución
+
+kable(porcentaje_devolución[,c(1,5)])
+##politica de devoluciones no está funcionando en gallo negro. 
+```
+
+
+#viajes por tipo de camion 
+```{r}
+
+viajes_camiones<-df %>%  
+  group_by(UNIDAD) %>% 
+  summarise(cantidad_viajes=n(),cantidad_dinero=sum(Q),valor_por_viaje=cantidad_dinero/cantidad_viajes) 
+
+viajes_camiones[2,1]<-"Camion Pequenio"
+viajes_camiones %>%  
+  hchart("column",hcaes(UNIDAD,valor_por_viaje)) %>% 
+  hc_title(text="Rendimiento Unidades" ) %>% 
+  hc_subtitle(text="")
+
+## explicar que es valor por viaje
+```
+
+# Producto Promedio por tipo de camión 
+```{r}
+producto_camiones<-df %>%  
+  group_by(UNIDAD) %>% 
+  summarise(promedio_cant=mean(CANTIDAD)) 
+
+producto_camiones[2,1]<-"Camion Pequenio"
+producto_camiones %>%  
+  hchart("column",hcaes(UNIDAD,promedio_cant)) %>% 
+  hc_title(text="Carga Promedio Camiones" ) %>% 
+  hc_subtitle(text="")
+
+# explicar que es la carga promedio
+```
+
+
+#viajes por piloto 
+```{r}
+viajes_pilotos<-df %>%  
+  group_by(PILOTO) %>% 
+  summarise(cantidad_viajes=n(),cantidad_dinero=sum(Q),valor_por_viaje=cantidad_dinero/cantidad_viajes)
+
+viajes_pilotos %>%  
+  hchart("column",hcaes(PILOTO,valor_por_viaje)) %>% 
+  hc_title(text="Rendimiento Piloto" ) %>% 
+  hc_subtitle(text="")
+
+viajes_piloto_promedio<-2180/9
+viajes_piloto_promedio
+
+
+cantidad_dinero_promedio_piloto<-sum(viajes_pilotos$cantidad_dinero)/9
+cantidad_dinero_promedio_piloto
+
+
+## al dia perdemos aproximadamente un viaje y Q200 
+#explicar eficiencia de pilotos y analizar si sus viajes diarios son coherentes. que pasa si uno se enferma 
+```
+
+# group by cliente y transporte
+
+```{r}
+transportes_por_cliente<-df %>% 
+  group_by(UNIDAD,CLIENTE) %>% 
+  summarise(envios=n())
+```
+#CLIENTES Y TRANSPORTE GRAFICA
+```{r}
+transportes_por_cliente$UNIDAD<-gsub(pattern = "Camion Peque.*",replacement = "Camion Pequenio",x = transportes_por_cliente$UNIDAD)
+transportes_por_cliente %>% 
+  hchart('column', hcaes(CLIENTE,envios, group = UNIDAD)) %>%
+  hc_colors(c("#0073C2FF", "#EFC000FF","#FF7F50")) %>% 
+    hc_title(text="Envíos a cliente por Cliente y Tipo de Unidad" ) %>% 
+  hc_subtitle(text="Se utilizan más camiones grandes  al ser los que tienen más capacidad. Hay pedidos que no se pueden enviar ni en Camión Pequeño ni en Panel ")
+
+#que decimos del uso del transporte? 
+```
+
+# agrupar para ver cliente y fechas 
+```{r}
+cliente_fechas<- ventas %>% 
+  group_by(MES,CLIENTE) %>% 
+  summarise(pedidos=n())
+
+cliente_fechas$CLIENTE<-gsub(pattern = "TAQUERIA EL CHINITO.*",replacement = "TAQUERIA EL CHINITO",x = cliente_fechas$CLIENTE)
+cliente_fechas$CLIENTE<-gsub(pattern = "EL PINCHE OBELISCO.*",replacement = "EL PINCHE OBELISCO",x = cliente_fechas$CLIENTE)
+cliente_fechas$CLIENTE<-gsub(pattern = "EL GALLO NEGRO.*",replacement = "EL GALLO NEGRO",x = cliente_fechas$CLIENTE)
+cliente_fechas$CLIENTE<-gsub(pattern = "UBIQUO LABS.*",replacement = "UBIQUO LABS",x = cliente_fechas$CLIENTE)
+cliente_fechas$CLIENTE<-gsub(pattern = "POLLO PINULITO.*",replacement = "POLLO PINULITO",x = cliente_fechas$CLIENTE)
+
+
+
+cliente_fechas %>% 
+    hchart('line', hcaes(MES,pedidos, group = CLIENTE)) %>%
+  hc_colors(c("#0073C2FF", "#EFC000FF","#FF7F50")) %>% 
+  hc_title(text="Pedidos por Cliente al mes" ) %>% 
+  hc_subtitle(text="Los pedidos están en un intervalo de 2 a 32 pedidos, pero tienen una media de 10 pedidos mensuales por cliente.")
+
+# aca hablamos de media, rango de pedidos, estabilidad, que podemos hacer con esto? precios? clientes fieles? 
+```
+
+
+```{r}
+df %>% 
+  group_by(MES,) %>% 
+  summarise(n=n_distinct(PILOTO))
+```
+
+
+
+
