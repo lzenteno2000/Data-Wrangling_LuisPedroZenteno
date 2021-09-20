@@ -98,6 +98,6 @@ df[1,]
 
 ## indexing 
 new_elements<-c("new",7,2,"g",17)
-rbind(df,new_elements)
+rbind(df2,new_elements)
 df2$col1<-factor(df2$col1)
 rbind(df2,new_elements)
