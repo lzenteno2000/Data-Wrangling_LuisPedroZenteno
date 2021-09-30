@@ -101,3 +101,99 @@ new_elements<-c("new",7,2,"g",17)
 rbind(df2,new_elements)
 df2$col1<-factor(df2$col1)
 rbind(df2,new_elements)
+
+
+############################# dplyr 
+
+
+
+
+
+
+
+
+##dplyr
+df<- mutate_if(df,is.character,as.factor)
+glimpse(df)
+
+### renombrar columnas con base r 
+
+names(df)[4]<-"top_genre"
+names(df)
+
+
+#renombrar con dplyr
+rename(df,top_genre=`top genre`)
+
+#anidando
+head(select(df,artist,year))
+
+# pipe operator
+df %>% 
+  select(artist,year) %>%
+  head()
+
+## renombrar columnaas con dplyr
+
+df %>% 
+  rename(top_genre=`top genre`)
+
+##todas columnas -1
+
+head(df[-1])
+
+# utilizando dplyr
+df %>% 
+  select(-X1) %>% 
+  head()
+
+df %>% 
+  select(artist,title,year) %>% 
+  filter(year==2010) %>% 
+  head() %>% 
+  View()
+
+
+## cuanto sartistas teenemos por año 
+df %>% 
+  #select(year,artist) %>% 
+  group_by(year) %>% 
+  summarise(artistas=n())
+
+#cuantos artistas unicos tenemos por año 
+df %>% 
+  select(year,artist) %>% 
+  group_by(year) %>% 
+  summarise(artistas_unicos=n_distinct(artist))
+
+# artistas unicos existen en la base 
+df %>% 
+  summarise(artistas_unicos=n_distinct(artist))
+
+
+## canciones unicas en el dataset
+df %>% 
+  summarise(canciones_unicas=n_distinct(title))
+
+## canciones  repetidas
+df %>% 
+  summarise(canciones_unicas= n()-n_distinct(title))
+
+# canciones repetidas cuales 
+df %>% 
+  group_by(title) %>% 
+  summarise(canciones_repetidas=n()) %>% 
+  filter(canciones_repetidas > 1)
+
+## solución tepi
+df %>% 
+  group_by(title) %>% 
+  summarise(freq=n()) %>% 
+  group_by(freq) %>% 
+  summarise(n())
+
+#cuantas canciones se llaman igual que soy diferentes artistas
+df %>% 
+  group_by(artist,title) %>% 
+  summarise(canciones=ifelse(n()>1,n(),NA)) %>% 
+  na.omit()
