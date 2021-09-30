@@ -2,7 +2,8 @@
 title: "Laboratorio5"
 author: "Luis Pedro Zenteno"
 date: "9/29/2021"
-output: html_document
+output: rmarkdown::github_document
+always_allow_html: true
 
 ---
 
@@ -99,7 +100,7 @@ mensual <- data %>%
   hchart("line",hcaes(mes,n)) %>% 
   hc_title(text="Llamadas por mes" ) %>% 
   hc_subtitle(text="Parece fluctuar cada mes, pero no en valores significativos")
-mensual
+
 
 enero <- data %>%
   group_by(dia=ymd(`Fecha Creación`)) %>% 
@@ -108,9 +109,12 @@ enero <- data %>%
   hchart("line",hcaes(dia,n)) %>% 
   hc_title(text="Llamadas de enero" ) %>% 
   hc_subtitle(text="No parece exisir estacionalidad en los días de la semana")
-enero
+
 
 ```
+![Gráfica LLamadas por mes](foto2.png)
+![Gráfica LLamadas de enero](foto1.png)
+
 Por lo que he analizado en la gráfica mensual, existe un pequeña estacionalidad alternando cada mes, pero me parece muy pequeña como para ser significativa. El cambio en llamadas es mínimo en comparación a la cantidad de llamadas que son. Después que además, se analizó la gráfica del mes de enero para analizar estacionalidad diaria, también se descarta una estacionalidad en los días de la semana. Realmente no se encontró un patrón específico ni relevante. 
 
 * ¿Cuántos minutos dura la llamada promedio?

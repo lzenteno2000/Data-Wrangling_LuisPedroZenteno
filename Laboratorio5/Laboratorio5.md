@@ -127,35 +127,14 @@ kable(mes_ocupado)
 
 ``` r
 library(highcharter)
-```
-
-    ## Registered S3 method overwritten by 'quantmod':
-    ##   method            from
-    ##   as.zoo.data.frame zoo
-
-``` r
 mensual <- data %>%
   group_by(mes=month(ymd(`Fecha Creación`),label = TRUE,abbr = FALSE)) %>% 
   tally() %>% 
   hchart("line",hcaes(mes,n)) %>% 
   hc_title(text="Llamadas por mes" ) %>% 
   hc_subtitle(text="Parece fluctuar cada mes, pero no en valores significativos")
-mensual
-```
 
-    ## PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.
 
-<!--html_preserve-->
-
-<div id="htmlwidget-1d3eda50996ada1094a0" class="highchart html-widget" style="width:100%;height:500px;">
-
-</div>
-
-<script type="application/json" data-for="htmlwidget-1d3eda50996ada1094a0">{"x":{"hc_opts":{"chart":{"reflow":true},"title":{"text":"Llamadas por mes"},"yAxis":{"title":{"text":"n"},"type":"linear"},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0,"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"scatter":{"marker":{"symbol":"circle"}}},"series":[{"group":"group","data":[{"mes":"January","n":12951,"y":12951,"name":"January"},{"mes":"February","n":10583,"y":10583,"name":"February"},{"mes":"March","n":12946,"y":12946,"name":"March"},{"mes":"April","n":12210,"y":12210,"name":"April"},{"mes":"May","n":12885,"y":12885,"name":"May"},{"mes":"June","n":11983,"y":11983,"name":"June"},{"mes":"July","n":12832,"y":12832,"name":"July"},{"mes":"August","n":12804,"y":12804,"name":"August"},{"mes":"September","n":12315,"y":12315,"name":"September"},{"mes":"October","n":12953,"y":12953,"name":"October"},{"mes":"November","n":12217,"y":12217,"name":"November"},{"mes":"December","n":12825,"y":12825,"name":"December"}],"type":"line"}],"xAxis":{"type":"category","title":{"text":"mes"},"categories":null},"subtitle":{"text":"Parece fluctuar cada mes, pero no en valores significativos"}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":[],"jsHooks":[]}</script>
-
-<!--/html_preserve-->
-
-``` r
 enero <- data %>%
   group_by(dia=ymd(`Fecha Creación`)) %>% 
   filter(month(dia)==01) %>% 
@@ -163,15 +142,194 @@ enero <- data %>%
   hchart("line",hcaes(dia,n)) %>% 
   hc_title(text="Llamadas de enero" ) %>% 
   hc_subtitle(text="No parece exisir estacionalidad en los días de la semana")
-enero
 ```
 
-<!--html_preserve-->
+![Gráfica LLamadas por mes](foto2.png) ![Gráfica LLamadas de
+enero](foto1.png)
 
-<div id="htmlwidget-57dde9a902a5a284d1e1" class="highchart html-widget" style="width:100%;height:500px;">
+Por lo que he analizado en la gráfica mensual, existe un pequeña
+estacionalidad alternando cada mes, pero me parece muy pequeña como para
+ser significativa. El cambio en llamadas es mínimo en comparación a la
+cantidad de llamadas que son. Después que además, se analizó la gráfica
+del mes de enero para analizar estacionalidad diaria, también se
+descarta una estacionalidad en los días de la semana. Realmente no se
+encontró un patrón específico ni relevante.
 
-</div>
+  - ¿Cuántos minutos dura la llamada
+promedio?
 
-<script type="application/json" data-for="htmlwidget-57dde9a902a5a284d1e1">{"x":{"hc_opts":{"chart":{"reflow":true},"title":{"text":"Llamadas de enero"},"yAxis":{"title":{"text":"n"},"type":"linear"},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0,"showInLegend":false},"treemap":{"layoutAlgorithm":"squarified"},"scatter":{"marker":{"symbol":"circle"}}},"series":[{"group":"group","data":[{"dia":"2017-01-13","n":657,"x":1484265600000,"y":657},{"dia":"2017-01-14","n":679,"x":1484352000000,"y":679},{"dia":"2017-01-15","n":686,"x":1484438400000,"y":686},{"dia":"2017-01-16","n":687,"x":1484524800000,"y":687},{"dia":"2017-01-17","n":708,"x":1484611200000,"y":708},{"dia":"2017-01-18","n":649,"x":1484697600000,"y":649},{"dia":"2017-01-19","n":655,"x":1484784000000,"y":655},{"dia":"2017-01-20","n":704,"x":1484870400000,"y":704},{"dia":"2017-01-21","n":726,"x":1484956800000,"y":726},{"dia":"2017-01-22","n":680,"x":1485043200000,"y":680},{"dia":"2017-01-23","n":714,"x":1485129600000,"y":714},{"dia":"2017-01-24","n":696,"x":1485216000000,"y":696},{"dia":"2017-01-25","n":690,"x":1485302400000,"y":690},{"dia":"2017-01-26","n":670,"x":1485388800000,"y":670},{"dia":"2017-01-27","n":653,"x":1485475200000,"y":653},{"dia":"2017-01-28","n":627,"x":1485561600000,"y":627},{"dia":"2017-01-29","n":687,"x":1485648000000,"y":687},{"dia":"2017-01-30","n":669,"x":1485734400000,"y":669},{"dia":"2017-01-31","n":714,"x":1485820800000,"y":714}],"type":"line"}],"xAxis":{"type":"datetime","title":{"text":"dia"},"categories":null},"subtitle":{"text":"No parece exisir estacionalidad en los días de la semana"}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","drillUpText":"Back to {series.name}","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"thousandsSep":" ","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":[],"jsHooks":[]}</script>
+<!-- end list -->
 
-<!--/html_preserve-->
+``` r
+#Se eliminaron datos de las horas que tenían typos en excel para mejorar el análisis.
+tiempo_de_llamada <- data  %>% 
+  mutate(inicio=make_datetime(day=day(ymd(`Fecha Creación`)), month=month(ymd(`Fecha Creación`)),
+                              year=year(ymd(`Fecha Creación`)), hour=hour(`Hora Creación`),
+                              min=minute(`Hora Creación`), sec=seconds(`Hora Creación`)),
+         fin=make_datetime(year=year(ymd(`Fecha Final`)), month=month(ymd(`Fecha Final`)), 
+                           day=day(ymd(`Fecha Final`)), hour=hour(`Hora Final`),
+                           min=minute(`Hora Final`), sec=seconds(`Hora Final`))) %>% 
+  mutate(diferencia=difftime(fin, inicio, units='mins')) %>% 
+  select(`Hora Creación`,`Hora Final`,diferencia) %>% 
+  filter(diferencia>0)
+
+cat("La llamada promedio dura",round(mean(tiempo_de_llamada$diferencia)), "minutos")
+```
+
+    ## La llamada promedio dura 31 minutos
+
+  - Realice una tabla de frecuencias con el tiempo de llamada.
+
+<!-- end list -->
+
+``` r
+tabla_frecuencias <- table(tiempo_de_llamada$diferencia) %>%
+  as.data.frame() 
+
+tabla_frecuencias<-rename(tabla_frecuencias, "Tiempo de llamada en minutos"="Var1","Cantidad de llamadas"="Freq")
+
+
+kable(tabla_frecuencias,align = "c")
+```
+
+| Tiempo de llamada en minutos | Cantidad de llamadas |
+| :--------------------------: | :------------------: |
+|              2               |         4907         |
+|              4               |         4862         |
+|              6               |         4826         |
+|              8               |         4827         |
+|              10              |         4790         |
+|              12              |         4931         |
+|              14              |         4722         |
+|              16              |         4877         |
+|              18              |         4776         |
+|              20              |         4688         |
+|              22              |         4744         |
+|              24              |         4738         |
+|              26              |         4852         |
+|              28              |         4817         |
+|              30              |         4900         |
+|              32              |         4748         |
+|              34              |         4911         |
+|              36              |         4678         |
+|              38              |         4708         |
+|              40              |         4837         |
+|              42              |         4581         |
+|              44              |         4682         |
+|              46              |         4805         |
+|              48              |         4806         |
+|              50              |         4597         |
+|              52              |         4805         |
+|              54              |         4813         |
+|              56              |         4643         |
+|              58              |         4726         |
+|              60              |         4742         |
+
+# Parte 3: Signo Zodiacal
+
+``` r
+signo_zodiacal<- function(fecha){
+  fecha<- ymd(fecha)
+  
+  if(fecha>=make_date(year(fecha),12,22) & fecha<=make_date(year(fecha),1,19) ){
+    return("Capricorn")
+  }
+  if(fecha>=make_date(year(fecha),1,20) & fecha<=make_date(year(fecha),2,17) ){
+    return("Aquarious")
+  }
+  if(fecha>=make_date(year(fecha),2,18) & fecha<=make_date(year(fecha),3,19) ){
+    return("Pisces")
+    }
+  if(fecha>=make_date(year(fecha),3,20) & fecha<=make_date(year(fecha),4,19) ){
+    return("Aries")
+    }
+  if(fecha>=make_date(year(fecha),4,20) & fecha<=make_date(year(fecha),5,19) ){
+    return("Tauros")
+    }
+  if(fecha>=make_date(year(fecha),5,20) & fecha<=make_date(year(fecha),6,20) ){
+    return("Gemini")
+    }
+  if(fecha>=make_date(year(fecha),6,21) & fecha<=make_date(year(fecha),7,21) ){
+    return("Cancer")
+    }
+  if(fecha>=make_date(year(fecha),7,22) & fecha<=make_date(year(fecha),8,22) ){
+    return("Leo")
+    }
+  if(fecha>=make_date(year(fecha),8,23) & fecha<=make_date(year(fecha),9,21) ){
+    return("Virgo")
+    }
+  if(fecha>=make_date(year(fecha),9,22) & fecha<=make_date(year(fecha),10,22) ){
+    return("Libran")
+    }
+  if(fecha>=make_date(year(fecha),10,23) & fecha<=make_date(year(fecha),11,21) ){
+    return("Scorpio")
+    }
+  if(fecha>=make_date(year(fecha),11,22) & fecha<=make_date(year(fecha),12,21) ){
+    return("Sagittarius")
+    }
+}
+
+#format YYYY-MM-DD
+signo_zodiacal("2000-03-14")
+```
+
+    ## [1] "Pisces"
+
+# Flights
+
+  - Genere 4 nuevas columnas para cada variable con formato fecha y
+    hora.
+
+<!-- end list -->
+
+``` r
+library(nycflights13)
+library(DT)
+
+new_flights<-flights %>% 
+  mutate(new_dep_time=make_datetime(year, month, day, dep_time %/%100,dep_time %%100),
+         new_sched_dep_time=make_datetime(year, month, day, sched_dep_time %/%100,sched_dep_time %%100),
+         new_arr_time=make_datetime(year, month, day, arr_time %/%100,arr_time %%100),
+         new_sched_arr_time=make_datetime(year, month, day, sched_arr_time %/%100,sched_arr_time %%100)) %>% 
+  select(year, month, day,new_dep_time, new_sched_dep_time,new_arr_time, new_sched_arr_time) 
+  
+
+  
+kable(head(new_flights))
+```
+
+| year | month | day | new\_dep\_time      | new\_sched\_dep\_time | new\_arr\_time      | new\_sched\_arr\_time |
+| ---: | ----: | --: | :------------------ | :-------------------- | :------------------ | :-------------------- |
+| 2013 |     1 |   1 | 2013-01-01 05:17:00 | 2013-01-01 05:15:00   | 2013-01-01 08:30:00 | 2013-01-01 08:19:00   |
+| 2013 |     1 |   1 | 2013-01-01 05:33:00 | 2013-01-01 05:29:00   | 2013-01-01 08:50:00 | 2013-01-01 08:30:00   |
+| 2013 |     1 |   1 | 2013-01-01 05:42:00 | 2013-01-01 05:40:00   | 2013-01-01 09:23:00 | 2013-01-01 08:50:00   |
+| 2013 |     1 |   1 | 2013-01-01 05:44:00 | 2013-01-01 05:45:00   | 2013-01-01 10:04:00 | 2013-01-01 10:22:00   |
+| 2013 |     1 |   1 | 2013-01-01 05:54:00 | 2013-01-01 06:00:00   | 2013-01-01 08:12:00 | 2013-01-01 08:37:00   |
+| 2013 |     1 |   1 | 2013-01-01 05:54:00 | 2013-01-01 05:58:00   | 2013-01-01 07:40:00 | 2013-01-01 07:28:00   |
+
+  - 2.  Encuentre el delay total que existe en cada vuelo. El delay
+        total se puede encontrar sumando el delay de la salida y el
+        delay de la entrada.
+
+<!-- end list -->
+
+``` r
+delay_total <- flights %>% 
+  mutate(delay_total= minutes(dep_delay+arr_delay)) %>% 
+  select(flight, delay_total)
+
+kable(head(delay_total,10))
+```
+
+| flight | delay\_total |
+| -----: | -----------: |
+|   1545 |       13M 0S |
+|   1714 |       24M 0S |
+|   1141 |       35M 0S |
+|    725 |     \-19M 0S |
+|    461 |     \-31M 0S |
+|   1696 |        8M 0S |
+|    507 |       14M 0S |
+|   5708 |     \-17M 0S |
+|     79 |     \-11M 0S |
+|    301 |        6M 0S |
