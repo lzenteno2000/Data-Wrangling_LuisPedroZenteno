@@ -15,7 +15,7 @@ library(formattable)
 library(knitr)
 
 df<-read_delim("tabla_completa.csv",",",escape_double=FALSE,trim_ws=TRUE)
-df$UNIDAD<-gsub(pattern = "Camion Peque.*",replacement = "Camion Pequenio",x = df$UNIDAD)
+df$UNIDAD<-gsub(pattern = "Q.*",replacement = "Camion Pequenio",x = df$UNIDAD)
 
 
 ```
