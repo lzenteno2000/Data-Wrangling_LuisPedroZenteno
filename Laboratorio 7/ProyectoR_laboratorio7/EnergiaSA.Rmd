@@ -331,5 +331,8 @@ percent(diferencia)
 ```
 ![](fotos_gráficas/margen_nuevo.png)
 
-
+facturación p<-tidy_df %>% 
+  group_by(TiempoRecorrido) %>% 
+  summarise(margen=percent(1-(sum(CostoTotal)/sum(factura))) ) %>% 
+  arrange(-margen) 
 
